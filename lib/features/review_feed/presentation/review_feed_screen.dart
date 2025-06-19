@@ -87,147 +87,146 @@ class ReviewFeedScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // ─── TOP SECTION ───────────────────────────────────────
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Column(
-              children: [
-                // 1) Two pill‑shaped buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const ShareReviewScreen()),
-                        ),
-                        icon: const Icon(Icons.share, size: 18),
-                        label: const Text('Share Your Experience'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.help_outline, size: 18),
-                        label: const Text('Ask A Question'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 12),
-
-                // 2) Black search bar
-                Center(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search',
-                      hintStyle: TextStyle(color: Colors.white70),
-                      prefixIcon: const Icon(Icons.search, color: Colors.white70),
-                      filled: true,
-                      fillColor: Colors.black,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // 3) Image carousel
-                CarouselSlider(
-                  items: imageUrls.map((url) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.network(url,
-                          width: double.infinity, fit: BoxFit.cover),
-                    );
-                  }).toList(),
-                  options: CarouselOptions(
-                    height: 160,
-                    autoPlay: true,
-                    autoPlayInterval: const Duration(seconds: 3),
-                    enlargeCenterPage: true,
-                    viewportFraction: 0.9,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // ────────────────────────────────────────────────────────
-
-          // Reviews Feed
-          Expanded(
-            child: reviewsAsync.when(
-              data: (reviews) {
-                if (reviews.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Icon(Icons.flight_takeoff,
-                            size: 72, color: Colors.grey),
-                        SizedBox(height: 20),
-                        Text('No reviews yet',
-                            style: TextStyle(
-                                fontSize: 20, color: Colors.grey)),
-                        SizedBox(height: 10),
-                        Text('Be the first to share your travel story!',
-                            style: TextStyle(color: Colors.grey)),
-                      ],
-                    ),
-                  );
-                }
-                return ListView.separated(
+      body: reviewsAsync.when(
+        data: (reviews) {
+          return ListView.separated(
+            padding: EdgeInsets.zero,
+            separatorBuilder: (context, index) => const SizedBox(height: 16),
+            itemCount: (reviews.isEmpty ? 2 : reviews.length + 1),
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                // Top section
+                return Container(
+                  color: Colors.white,
                   padding:
-                  const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                  itemCount: reviews.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 16),
-                  itemBuilder: (ctx, i) => ReviewCard(review: reviews[i]),
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Column(
+                    children: [
+                      // 1) Two pill‑shaped buttons
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const ShareReviewScreen()),
+                              ),
+                              icon: const Icon(Icons.share, size: 18),
+                              label: const Text('Share Your Experience'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                foregroundColor: Colors.white,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () {},
+                              icon: const Icon(Icons.help_outline, size: 18),
+                              label: const Text('Ask A Question'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                foregroundColor: Colors.white,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      // 2) Black search bar
+                      Center(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Search',
+                            hintStyle: TextStyle(color: Colors.white70),
+                            prefixIcon:
+                                const Icon(Icons.search, color: Colors.white70),
+                            filled: true,
+                            fillColor: Colors.black,
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 14),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // 3) Image carousel
+                      CarouselSlider(
+                        items: imageUrls.map((url) {
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(url,
+                                width: double.infinity, fit: BoxFit.cover),
+                          );
+                        }).toList(),
+                        options: CarouselOptions(
+                          height: 160,
+                          autoPlay: true,
+                          autoPlayInterval: const Duration(seconds: 3),
+                          enlargeCenterPage: true,
+                          viewportFraction: 0.9,
+                        ),
+                      ),
+                    ],
+                  ),
                 );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.error_outline,
-                        size: 64, color: Colors.redAccent),
-                    const SizedBox(height: 18),
-                    Text('Oops! Something went wrong.',
-                        style: TextStyle(
-                            fontSize: 18, color: Colors.red.shade700),
-                        textAlign: TextAlign.center),
-                  ],
-                ),
-              ),
-            ),
+              } else if (reviews.isEmpty) {
+                // No reviews yet
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(Icons.flight_takeoff, size: 72, color: Colors.grey),
+                      SizedBox(height: 20),
+                      Text('No reviews yet',
+                          style: TextStyle(fontSize: 20, color: Colors.grey)),
+                      SizedBox(height: 10),
+                      Text('Be the first to share your travel story!',
+                          style: TextStyle(color: Colors.grey)),
+                    ],
+                  ),
+                );
+              } else {
+                // Review cards
+                final review = reviews[index - 1];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ReviewCard(review: review),
+                );
+              }
+            },
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline,
+                  size: 64, color: Colors.redAccent),
+              const SizedBox(height: 18),
+              Text('Oops! Something went wrong.',
+                  style: TextStyle(fontSize: 18, color: Colors.red.shade700),
+                  textAlign: TextAlign.center),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
