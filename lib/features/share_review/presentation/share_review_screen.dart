@@ -10,7 +10,7 @@ import '../../../core/widgets/media_preview.dart';
 import '../../../core/constants/class_options.dart';
 
 // Airlines list for dropdown
-static const List<Map<String, String>> airlines = [
+const List<Map<String, String>> airlines = [
   {'name': 'Air Bangladesh', 'country': 'Bangladesh', 'code': 'B9'},
   {'name': 'Biman Bangladesh Airlines', 'country': 'Bangladesh', 'code': 'BG'},
   {'name': 'Bismillah Airlines', 'country': 'Bangladesh', 'code': '5Z'},
