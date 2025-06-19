@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:video_player/video_player.dart';
+import 'package:flutter/foundation.dart';
 
 class MediaGrid extends StatelessWidget {
   final List<String> mediaUrls;
@@ -97,10 +98,17 @@ class _MediaViewerState extends State<MediaViewer> {
   void initState() {
     super.initState();
     if (widget.isVideo) {
-      _videoController = VideoPlayerController.networkUrl(Uri.parse(widget.mediaUrl))
-        ..initialize().then((_) {
-          setState(() {});
-        });
+      if (kIsWeb) {
+        _videoController = VideoPlayerController.networkUrl(Uri.parse(widget.mediaUrl))
+          ..initialize().then((_) {
+            setState(() {});
+          });
+      } else {
+        _videoController = VideoPlayerController.network(widget.mediaUrl)
+          ..initialize().then((_) {
+            setState(() {});
+          });
+      }
     }
   }
 
