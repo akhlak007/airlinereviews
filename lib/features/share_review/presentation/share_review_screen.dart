@@ -82,14 +82,73 @@ class _ShareReviewScreenState extends ConsumerState<ShareReviewScreen> {
   }
 
   Future<void> _selectDate() async {
-    final date = await showDatePicker(
+    // Show a dialog to pick month and year only
+    final now = DateTime.now();
+    int selectedYear = now.year;
+    int selectedMonth = now.month;
+    final result = await showDialog<DateTime>(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Select Month and Year'),
+          content: SizedBox(
+            height: 120,
+            child: Column(
+              children: [
+                // Year picker
+                DropdownButton<int>(
+                  value: selectedYear,
+                  items: List.generate(10, (i) => now.year - i)
+                      .map((year) => DropdownMenuItem(
+                            value: year,
+                            child: Text(year.toString()),
+                          ))
+                      .toList(),
+                  onChanged: (year) {
+                    if (year != null) {
+                      selectedYear = year;
+                      (context as Element).markNeedsBuild();
+                    }
+                  },
+                ),
+                // Month picker
+                DropdownButton<int>(
+                  value: selectedMonth,
+                  items: List.generate(12, (i) => i + 1)
+                      .map((month) => DropdownMenuItem(
+                            value: month,
+                            child: Text(
+                              '${month.toString().padLeft(2, '0')}',
+                            ),
+                          ))
+                      .toList(),
+                  onChanged: (month) {
+                    if (month != null) {
+                      selectedMonth = month;
+                      (context as Element).markNeedsBuild();
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, DateTime(selectedYear, selectedMonth));
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
-    if (date != null) {
-      ref.read(shareReviewViewModelProvider.notifier).updateTravelDate(date);
+    if (result != null) {
+      ref.read(shareReviewViewModelProvider.notifier).updateTravelDate(result);
     }
   }
 
@@ -307,8 +366,8 @@ class _ShareReviewScreenState extends ConsumerState<ShareReviewScreen> {
                           const SizedBox(width: 8),
                           Text(
                             state.travelDate != null
-                                ? '${state.travelDate!.day}/${state.travelDate!.month}/${state.travelDate!.year}'
-                                : 'Travel Date',
+                                ? '${state.travelDate!.month.toString().padLeft(2, '0')}/${state.travelDate!.year}'
+                                : 'Travel Month/Year',
                             style: TextStyle(
                               color: state.travelDate != null
                                   ? Colors.black

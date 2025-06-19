@@ -143,21 +143,21 @@ class _ReviewCardState extends ConsumerState<ReviewCard> {
                           runSpacing: 8,
                           children: pillTags
                               .map((tag) => Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 7),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              tag,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ))
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 7),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      tag,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ))
                               .toList(),
                         ),
                       ),
@@ -227,13 +227,13 @@ class _ReviewCardState extends ConsumerState<ReviewCard> {
               const Divider(),
               StreamBuilder<List<ReviewComment>>(
                 stream:
-                ref.read(reviewRepositoryProvider).getComments(review.id!),
+                    ref.read(reviewRepositoryProvider).getComments(review.id!),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return const SizedBox.shrink();
                   final comments = snapshot.data!;
                   return Column(
                     children:
-                    comments.map((c) => _CommentTile(comment: c)).toList(),
+                        comments.map((c) => _CommentTile(comment: c)).toList(),
                   );
                 },
               ),
@@ -249,7 +249,7 @@ class _ReviewCardState extends ConsumerState<ReviewCard> {
                           border: OutlineInputBorder(),
                           isDense: true,
                           contentPadding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         ),
                       ),
                     ),
@@ -318,9 +318,22 @@ class _ReviewImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Image.network(url, fit: BoxFit.cover),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MediaViewer(
+              mediaUrl: url,
+              isVideo: false,
+            ),
+          ),
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.network(url, fit: BoxFit.cover),
+      ),
     );
   }
 }
