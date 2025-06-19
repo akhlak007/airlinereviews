@@ -21,11 +21,11 @@ class ReviewFeedScreen extends ConsumerWidget {
     final reviewsAsync = ref.watch(reviewsStreamProvider);
     final user = FirebaseAuth.instance.currentUser;
 
-    // Dummy carousel images
-    final imageUrls = [
-      'https://picsum.photos/800/300?image=10',
-      'https://picsum.photos/800/300?image=20',
-      'https://picsum.photos/800/300?image=30',
+    // Local asset images replacing network URLs
+    final imageAssets = [
+      'assets/images/carousel1.jpg',
+      'assets/images/carousel2.jpg',
+      'assets/images/carousel3.jpg',
     ];
 
     return Scaffold(
@@ -99,7 +99,7 @@ class ReviewFeedScreen extends ConsumerWidget {
                 return Container(
                   color: Colors.white,
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Column(
                     children: [
                       // 1) Two pill‑shaped buttons
@@ -118,7 +118,7 @@ class ReviewFeedScreen extends ConsumerWidget {
                                 backgroundColor: Colors.black,
                                 foregroundColor: Colors.white,
                                 padding:
-                                    const EdgeInsets.symmetric(vertical: 14),
+                                const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),
                                 ),
@@ -135,7 +135,7 @@ class ReviewFeedScreen extends ConsumerWidget {
                                 backgroundColor: Colors.black,
                                 foregroundColor: Colors.white,
                                 padding:
-                                    const EdgeInsets.symmetric(vertical: 14),
+                                const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),
                                 ),
@@ -150,13 +150,13 @@ class ReviewFeedScreen extends ConsumerWidget {
                         child: TextField(
                           decoration: InputDecoration(
                             hintText: 'Search',
-                            hintStyle: TextStyle(color: Colors.white70),
+                            hintStyle: const TextStyle(color: Colors.white70),
                             prefixIcon:
-                                const Icon(Icons.search, color: Colors.white70),
+                            const Icon(Icons.search, color: Colors.white70),
                             filled: true,
                             fillColor: Colors.black,
                             contentPadding:
-                                const EdgeInsets.symmetric(vertical: 14),
+                            const EdgeInsets.symmetric(vertical: 14),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                               borderSide: BorderSide.none,
@@ -166,13 +166,16 @@ class ReviewFeedScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      // 3) Image carousel
+                      // 3) Image carousel (local assets)
                       CarouselSlider(
-                        items: imageUrls.map((url) {
+                        items: imageAssets.map((path) {
                           return ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Image.network(url,
-                                width: double.infinity, fit: BoxFit.cover),
+                            child: Image.asset(
+                              path,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
                           );
                         }).toList(),
                         options: CarouselOptions(

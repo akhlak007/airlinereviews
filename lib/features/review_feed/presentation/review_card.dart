@@ -184,15 +184,16 @@ class _ReviewCardState extends ConsumerState<ReviewCard> {
             const SizedBox(height: 12),
 
             // Review Text
-            Text(
-              review.description,
-              style: const TextStyle(fontSize: 15, height: 1.5),
+            _ExpandableText(
+              text: review.description,
+              maxLines: 4,
             ),
             const SizedBox(height: 12),
 
             // Media Grid
             if (review.mediaUrls.isNotEmpty)
-              _ReviewMediaGrid(mediaUrls: review.mediaUrls),
+              MediaGrid(
+                  mediaUrls: review.mediaUrls, mediaTypes: review.mediaTypes),
             const SizedBox(height: 12),
 
             // Actions Row
@@ -268,76 +269,6 @@ class _ReviewCardState extends ConsumerState<ReviewCard> {
   }
 }
 
-class _ReviewMediaGrid extends StatelessWidget {
-  final List<String> mediaUrls;
-  const _ReviewMediaGrid({required this.mediaUrls});
-
-  @override
-  Widget build(BuildContext context) {
-    final showCount = mediaUrls.length > 4 ? 4 : mediaUrls.length;
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: 4,
-        crossAxisSpacing: 4,
-        childAspectRatio: 1,
-      ),
-      itemCount: showCount,
-      itemBuilder: (context, i) {
-        if (i == 3 && mediaUrls.length > 4) {
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              _ReviewImage(url: mediaUrls[i]),
-              Container(
-                color: Colors.black.withOpacity(0.5),
-                child: Center(
-                  child: Text(
-                    '+${mediaUrls.length - 3}',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ],
-          );
-        }
-        return _ReviewImage(url: mediaUrls[i]);
-      },
-    );
-  }
-}
-
-class _ReviewImage extends StatelessWidget {
-  final String url;
-  const _ReviewImage({required this.url});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MediaViewer(
-              mediaUrl: url,
-              isVideo: false,
-            ),
-          ),
-        );
-      },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Image.network(url, fit: BoxFit.cover),
-      ),
-    );
-  }
-}
-
 class _CommentTile extends StatelessWidget {
   final ReviewComment comment;
   const _CommentTile({required this.comment});
@@ -380,6 +311,67 @@ class _CommentTile extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ExpandableText extends StatefulWidget {
+  final String text;
+  final int maxLines;
+  const _ExpandableText({required this.text, this.maxLines = 4});
+
+  @override
+  State<_ExpandableText> createState() => _ExpandableTextState();
+}
+
+class _ExpandableTextState extends State<_ExpandableText> {
+  bool _expanded = false;
+  late String _firstHalf;
+  late String _secondHalf;
+  bool _showSeeMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final span = TextSpan(text: widget.text);
+      final tp = TextPainter(
+        text: span,
+        maxLines: widget.maxLines,
+        textDirection: TextDirection.ltr,
+      )..layout(maxWidth: MediaQuery.of(context).size.width - 32);
+      setState(() {
+        _showSeeMore = tp.didExceedMaxLines;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.text,
+          maxLines: _expanded ? null : widget.maxLines,
+          overflow: _expanded ? TextOverflow.visible : TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 15, height: 1.5),
+        ),
+        if (_showSeeMore)
+          GestureDetector(
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                _expanded ? 'See less' : 'See more',
+                style: const TextStyle(
+                  color: Colors.deepPurple,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
