@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'auth_viewmodel.dart';
+import '../../review_feed/presentation/review_feed_screen.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
@@ -40,11 +41,22 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   void _handleSignUp() async {
     if (_formKey.currentState!.validate()) {
       await ref.read(authViewModelProvider.notifier).signUp(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-        displayName: _displayNameController.text.trim(),
-        country: _selectedCountry,
-      );
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
+            displayName: _displayNameController.text.trim(),
+            country: _selectedCountry,
+          );
+      // If no error, navigate to feed
+      final authState = ref.read(authViewModelProvider);
+      if (authState.error == null) {
+        if (mounted) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => const ReviewFeedScreen()),
+            (route) => false,
+          );
+        }
+      }
     }
   }
 
@@ -97,7 +109,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(color: Colors.deepPurple),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 16),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -123,7 +136,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(color: Colors.deepPurple),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 16),
                   ),
                   items: _countries.map((country) {
                     return DropdownMenuItem(
@@ -155,7 +169,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(color: Colors.deepPurple),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 16),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -185,9 +200,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(color: Colors.deepPurple),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 16),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                      icon: Icon(_obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility),
                       onPressed: () {
                         setState(() {
                           _obscurePassword = !_obscurePassword;
@@ -236,12 +254,14 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
                       : const Text(
                           'Sign Up',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
                         ),
                 ),
                 const SizedBox(height: 24),
